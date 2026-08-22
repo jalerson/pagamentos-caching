@@ -1,0 +1,50 @@
+@baseUrl = http://127.0.0.1:8000
+@paymentId = {{solicitarPagamento.response.body.$.id}}
+
+# Execute cada bloco pelo link "Send Request" exibido pelo REST Client.
+# Execute primeiro "Solicitar pagamento" para preencher {{paymentId}}.
+
+### Solicitar pagamento
+
+# @name solicitarPagamento
+POST {{baseUrl}}/pagamentos
+Content-Type: application/json
+
+< ./requests/pagamento.json
+
+### Consultar imediatamente: pagamento processando e cache MISS
+
+GET {{baseUrl}}/pagamentos/{{paymentId}}
+Accept: application/json
+
+### Repetir imediatamente: pagamento processando e cache HIT
+
+GET {{baseUrl}}/pagamentos/{{paymentId}}
+Accept: application/json
+
+### Consultar após a expiração do TTL: novo cache MISS
+
+GET {{baseUrl}}/pagamentos/{{paymentId}}
+Accept: application/json
+
+### Consultar após 30 segundos: pagamento aprovado
+
+GET {{baseUrl}}/pagamentos/{{paymentId}}
+Accept: application/json
+
+### Repetir a consulta do pagamento aprovado: cache HIT
+
+GET {{baseUrl}}/pagamentos/{{paymentId}}
+Accept: application/json
+
+### Enviar uma solicitação de pagamento inválida
+
+POST {{baseUrl}}/pagamentos
+Content-Type: application/json
+
+< ./requests/pagamento-invalido.json
+
+### Consultar um pagamento inexistente
+
+GET {{baseUrl}}/pagamentos/00000000-0000-0000-0000-000000000000
+Accept: application/json

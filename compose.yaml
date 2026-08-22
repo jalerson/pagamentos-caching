@@ -1,0 +1,45 @@
+services:
+  api:
+    build: .
+    environment:
+      DATABASE_URL: postgresql://pagamentos:pagamentos@database:5432/pagamentos
+      REDIS_URL: redis://redis:6379/0
+      PAYMENT_DELAY_SECONDS: 30
+      PAYMENT_CACHE_TTL_SECONDS: 15
+    ports:
+      - "8000:8000"
+    depends_on:
+      redis:
+        condition: service_healthy
+      database:
+        condition: service_healthy
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 2s
+      retries: 15
+
+  database:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: pagamentos
+      POSTGRES_USER: pagamentos
+      POSTGRES_PASSWORD: pagamentos
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+      - ./database:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pagamentos -d pagamentos"]
+      interval: 2s
+      timeout: 2s
+      retries: 15
+
+volumes:
+  postgres_data:
