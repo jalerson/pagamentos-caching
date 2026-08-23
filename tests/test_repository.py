@@ -4,7 +4,7 @@ import asyncio
 import uuid
 
 from app.repository import PaymentsRepository
-from app.schemas import PaymentCreate
+from app.models import PaymentCreate
 from app.settings import settings
 
 

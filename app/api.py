@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 
 from .cache import PaymentCache
 from .repository import PaymentsRepository
-from .schemas import PaymentCreate, PaymentResponse
+from .models import PaymentCreate, PaymentResponse
 from .settings import settings
 
 

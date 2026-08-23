@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, timezone
 import uuid
 
 from app.cache import PaymentCache
-from app.schemas import PaymentResponse
+from app.models import PaymentResponse
 
 
 class FakeRedis:

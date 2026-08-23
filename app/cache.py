@@ -4,7 +4,7 @@ import uuid
 
 from redis.asyncio import Redis
 
-from .schemas import PaymentResponse
+from .models import PaymentResponse
 
 
 class PaymentCache:

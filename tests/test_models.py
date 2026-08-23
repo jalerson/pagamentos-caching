@@ -5,8 +5,7 @@ import uuid
 import pytest
 from pydantic import ValidationError
 
-from app.models import Payment
-from app.schemas import PaymentCreate, PaymentResponse
+from app.models import Payment, PaymentCreate, PaymentResponse
 
 
 def test_accepts_tokenized_payment() -> None:

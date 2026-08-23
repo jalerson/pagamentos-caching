@@ -6,7 +6,7 @@ from fastapi import Response
 
 from app.api import request_payment
 from app.repository import PaymentsRepository
-from app.schemas import PaymentCreate
+from app.models import PaymentCreate
 from app.settings import settings
 
 

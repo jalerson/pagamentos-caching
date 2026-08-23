@@ -4,8 +4,7 @@ import uuid
 
 import asyncpg
 
-from .models import Payment
-from .schemas import PaymentCreate
+from .models import Payment, PaymentCreate
 
 
 class PaymentsRepository:
