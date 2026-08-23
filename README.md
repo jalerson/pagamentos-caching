@@ -4,6 +4,8 @@ API didática em FastAPI com exatamente 2 operações de negócio: criar uma sol
 
 ## Executar a API, o PostgreSQL e o Redis
 
+Para executar os serviços, é necessário ter o Docker Desktop instalado.
+
 ```bash
 docker compose up --build
 ```
@@ -12,7 +14,7 @@ Documentação: `http://127.0.0.1:8000/docs`
 
 ## Instalar o REST Client no Visual Studio Code
 
-As requisições usadas nas demonstrações estão no arquivo `requisicoes.http`. Para executá-las, instale a extensão [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client), de Huachao Mao:
+As requisições de exemplo estão no arquivo `requisicoes.http`. Para executá-las, instale a extensão [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client), de Huachao Mao:
 
 1. Abra a área **Extensions** do Visual Studio Code com `Cmd+Shift+X` no macOS ou `Ctrl+Shift+X` no Windows e Linux.
 2. Pesquise por `REST Client` ou pelo identificador `humao.rest-client`.
@@ -26,13 +28,13 @@ Também é possível pressionar `F1`, procurar por `Extensions: Install Extensio
 2. Abra `requisicoes.http` no Visual Studio Code.
 3. Clique em **Send Request** acima da requisição desejada.
 4. Execute primeiro **Solicitar pagamento**. O REST Client reutilizará automaticamente o identificador retornado nas consultas seguintes.
-5. Respeite os intervalos indicados nos títulos das requisições para demonstrar a expiração do TTL e a aprovação depois de 30 segundos.
+5. Respeite os intervalos indicados nos títulos das requisições para observar a expiração do TTL e a aprovação depois de 30 segundos.
 
 A primeira consulta apresenta `X-Cache: MISS`; uma repetição dentro do TTL apresenta `X-Cache: HIT`. O TTL padrão é 15 segundos. Depois desse tempo, o Redis remove a chave e a consulta seguinte volta ao PostgreSQL.
 
 Em um `HIT`, a API ainda compara `created_at` com o horário atual. Assim, uma resposta em cache também muda de `processando` para `aprovado` depois dos 30 segundos. Não existe uma tarefa em segundo plano: a aplicação apenas simula o comportamento assíncrono.
 
-Para acompanhar a expiração durante a gravação, consulte no `redis-cli` o TTL da chave `pagamento:<id>`.
+Para acompanhar a expiração em tempo real, consulte no `redis-cli` o TTL da chave `pagamento:<id>`.
 
 ## Banco de dados
 
