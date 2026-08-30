@@ -60,13 +60,3 @@ class PaymentResponse(BaseModel):
             status=status,
             created_at=payment.created_at,
         )
-
-    def with_current_status(self, delay_seconds: int) -> "PaymentResponse":
-        """Recalcula o status de uma resposta que veio do cache."""
-
-        # Repetimos o cálculo porque o tempo continua passando durante o TTL.
-        elapsed_seconds = (
-            datetime.now(self.created_at.tzinfo) - self.created_at
-        ).total_seconds()
-        status = "aprovado" if elapsed_seconds >= delay_seconds else "processando"
-        return self.model_copy(update={"status": status})

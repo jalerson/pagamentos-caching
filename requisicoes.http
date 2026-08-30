@@ -22,17 +22,22 @@ Accept: application/json
 GET {{baseUrl}}/pagamentos/{{paymentId}}
 Accept: application/json
 
-### Consultar após a expiração do TTL: novo cache MISS
+### Após cerca de 20 segundos: processando e novo cache MISS
 
 GET {{baseUrl}}/pagamentos/{{paymentId}}
 Accept: application/json
 
-### Consultar após 30 segundos: pagamento aprovado
+### Após 30 segundos, antes do novo TTL expirar: HIT ainda processando
 
 GET {{baseUrl}}/pagamentos/{{paymentId}}
 Accept: application/json
 
-### Repetir a consulta do pagamento aprovado: cache HIT
+### Após o novo TTL expirar: pagamento aprovado e cache MISS
+
+GET {{baseUrl}}/pagamentos/{{paymentId}}
+Accept: application/json
+
+### Repetir imediatamente: pagamento aprovado e cache HIT
 
 GET {{baseUrl}}/pagamentos/{{paymentId}}
 Accept: application/json

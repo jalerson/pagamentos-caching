@@ -1,7 +1,7 @@
 """Testes do cache sem depender de um servidor Redis real."""
 
 import asyncio
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 import uuid
 
 from app.cache import PaymentCache
@@ -44,17 +44,3 @@ def test_cache_round_trip_uses_configured_ttl() -> None:
         assert await cache.get(payment_id) == payment
 
     asyncio.run(scenario())
-
-
-def test_cached_payment_becomes_approved_after_delay() -> None:
-    """Confirma que o status também é recalculado para dados em cache."""
-
-    payment = PaymentResponse(
-        id=uuid.uuid4(),
-        amount="249.90",
-        currency="BRL",
-        status="processando",
-        created_at=datetime.now(timezone.utc) - timedelta(seconds=31),
-    )
-
-    assert payment.with_current_status(delay_seconds=30).status == "aprovado"

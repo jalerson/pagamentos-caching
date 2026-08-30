@@ -59,14 +59,10 @@ async def get_payment(
 
     cached_payment = await cache.get(payment_id)
     if cached_payment is not None:
-        # O tempo continua passando mesmo enquanto a resposta está no cache.
-        current_payment = cached_payment.with_current_status(
-            settings.payment_delay_seconds
-        )
-        if current_payment.status != cached_payment.status:
-            await cache.set(current_payment)
+        # Em um HIT, devolvemos exatamente a cópia armazenada. Ela pode ficar
+        # desatualizada até o TTL expirar, que é uma desvantagem do cache.
         response.headers["X-Cache"] = "HIT"
-        return current_payment
+        return cached_payment
 
     # Em um MISS, consultamos o PostgreSQL, que é a fonte persistente.
     payment = await repository.find(payment_id)

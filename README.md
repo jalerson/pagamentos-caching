@@ -28,11 +28,13 @@ Também é possível pressionar `F1`, procurar por `Extensions: Install Extensio
 2. Abra `requisicoes.http` no Visual Studio Code.
 3. Clique em **Send Request** acima da requisição desejada.
 4. Execute primeiro **Solicitar pagamento**. O REST Client reutilizará automaticamente o identificador retornado nas consultas seguintes.
-5. Respeite os intervalos indicados nos títulos das requisições para observar a expiração do TTL e a aprovação depois de 30 segundos.
+5. Respeite os intervalos indicados nos títulos das requisições para observar a expiração do TTL, uma resposta temporariamente desatualizada e a aprovação posterior.
 
 A primeira consulta apresenta `X-Cache: MISS`; uma repetição dentro do TTL apresenta `X-Cache: HIT`. O TTL padrão é 15 segundos. Depois desse tempo, o Redis remove a chave e a consulta seguinte volta ao PostgreSQL.
 
-Em um `HIT`, a API ainda compara `created_at` com o horário atual. Assim, uma resposta em cache também muda de `processando` para `aprovado` depois dos 30 segundos. Não existe uma tarefa em segundo plano: a aplicação apenas simula o comportamento assíncrono.
+Em um `HIT`, a API devolve exatamente a cópia armazenada. Por isso, ela pode continuar apresentando `processando` mesmo depois dos 30 segundos necessários para a aprovação. Somente quando o TTL expira, um novo `MISS` consulta o PostgreSQL, calcula o estado atual e preenche o cache novamente. Essa janela de possível desatualização é uma das desvantagens do caching: um TTL maior reduz consultas à fonte, mas pode manter dados antigos por mais tempo.
+
+Para observar esse comportamento, faça a primeira consulta imediatamente, aguarde cerca de 20 segundos e consulte novamente para criar uma nova entrada ainda com `processando`. Depois dos 30 segundos contados desde a criação, consulte antes que essa segunda entrada expire: a resposta será um `HIT` ainda desatualizado. Após a expiração, a consulta seguinte será um `MISS` e apresentará `aprovado`.
 
 Para acompanhar a expiração em tempo real, consulte no `redis-cli` o TTL da chave `pagamento:<id>`.
 
